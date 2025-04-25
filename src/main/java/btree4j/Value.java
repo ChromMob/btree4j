@@ -117,18 +117,14 @@ public class Value implements Comparable<Value>, Cloneable, Externalizable {
 
     @Override
     public int compareTo(Value value) {
-        byte[] ddata = value._data;
-        int dpos = value._pos;
-        int dlen = value._len;
-        int stop = _len > dlen ? dlen : _len;
+        byte[] ddata = value.getData();
+        int dpos = value.getPosition();
+        int dlen = value.getLength();
+        int stop = Math.min(_len, dlen);
         for (int i = 0; i < stop; i++) {
-            byte b1 = _data[_pos + i];
-            byte b2 = ddata[dpos + i];
-            if (b1 == b2) {
-                continue;
-            } else {
-                int s1 = (b1 >>> 0);
-                int s2 = (b2 >>> 0);
+            int s1 = _data[_pos + i] & 0xFF;
+            int s2 = ddata[dpos + i] & 0xFF;
+            if (s1 != s2) {
                 return s1 > s2 ? (i + 1) : -(i + 1);
             }
         }
